@@ -38,6 +38,29 @@ app.get('/links',
     });
 });
 
+app.get('/login', (req, res) => {
+  res.render('../views/login.ejs');
+});
+
+app.get('/signup', (req, res) => {
+  res.render('../views/signup.ejs');
+});
+
+app.post('/login', function() {
+  // if (Auth) {
+  //   res.redirect('/');
+  // } else {
+  //   res.redirect('/signup');
+  // }
+});
+app.post('/signup', function(req, res, next) {
+  var username = req.body.username;
+  var password = req.body.password;
+  
+  models.Users.create({username, password});
+  res.end();
+});
+
 app.post('/links', 
 (req, res, next) => {
   var url = req.body.url;

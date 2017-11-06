@@ -1,4 +1,6 @@
 const parseCookies = (req, res, next) => {
+  console.log(req, '!!!!!!!!!!!!!!!!!!');
+  console.log(req.headers, '???????????????????');
 };
 
 module.exports = parseCookies;
