@@ -17,18 +17,15 @@ app.use(express.static(path.join(__dirname, '../public')));
 
 
 
-app.get('/', 
-(req, res) => {
+app.get('/', (req, res) => {
   res.render('index');
 });
 
-app.get('/create', 
-(req, res) => {
+app.get('/create', (req, res) => {
   res.render('index');
 });
 
-app.get('/links', 
-(req, res, next) => {
+app.get('/links', (req, res, next) => {
   models.Links.getAll()
     .then(links => {
       res.status(200).send(links);
@@ -46,14 +43,25 @@ app.get('/signup', (req, res) => {
   res.render('../views/signup.ejs');
 });
 
-app.post('/login', function() {
-  modes.Users.compare();
-  // if (Auth) {
-  //   res.redirect('/');
-  // } else {
-  //   res.redirect('/signup');
-  // }
+app.post('/login', function(req, res) {
+  var userName = req.body.username;
+  var password = req.body.password;
+  //console.log(req);
+  //  use the query username to look up in database what password and salt are supposed to be
+  //  use models.compare to check password and salt against req.body.password
+  models.Users.get({username: userName}).then(function(user) {
+    if (user) {
+      if (models.Users.compare(password, user.password, user.salt)) {
+        res.redirect('/');
+      } else {
+        res.redirect('/login');
+      }
+    } else {
+      res.redirect('/login');
+    }
+  });
 });
+
 app.post('/signup', function(req, res, next) {
   var userName = req.body.username;
   var password = req.body.password;
@@ -66,14 +74,10 @@ app.post('/signup', function(req, res, next) {
         res.redirect('/');
       });
     }
-  //  if it doesn't, create user
-  //  if it does, redirect to signup
-  
   });
 });
 
-app.post('/links', 
-(req, res, next) => {
+app.post('/links', (req, res, next) => {
   var url = req.body.url;
   if (!models.Links.isValidUrl(url)) {
     // send back a 404 if link is not valid
