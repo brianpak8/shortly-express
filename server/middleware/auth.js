@@ -5,7 +5,7 @@ module.exports.createSession = (req, res, next) => {
   if (Object.keys(req.cookies).length === 0) {
     models.Sessions.create().then(function(session) {
       var sessionId = session.insertId;
-      models.Sessions.get({ id: sessionId }).then(function(session) {
+      return models.Sessions.get({ id: sessionId }).then(function(session) {
         req.session = session;
         req.session.hash = session.hash;
         res.cookies['shortlyid'] = {value: session.hash};
@@ -16,13 +16,13 @@ module.exports.createSession = (req, res, next) => {
     });
   } else {
     var hashId = req.cookies.shortlyid;
-    models.Sessions.get({ hash: hashId }).then(function(session) {
+    return models.Sessions.get({ hash: hashId }).then(function(session) {
       req.session = session;
       req.session.hash = session.hash;
       res.cookies['shortlyid'] = {value: session.hash};
       next();
     }).catch(function(err) {
-      console.error(err);
+      console.error('nononono');
     });
     //  get cookie off request
     //  cookie will be hash from last session
