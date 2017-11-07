@@ -47,6 +47,7 @@ app.get('/signup', (req, res) => {
 });
 
 app.post('/login', function() {
+  modes.Users.compare();
   // if (Auth) {
   //   res.redirect('/');
   // } else {
@@ -54,11 +55,21 @@ app.post('/login', function() {
   // }
 });
 app.post('/signup', function(req, res, next) {
-  var username = req.body.username;
+  var userName = req.body.username;
   var password = req.body.password;
+  //  first, check database to see if username already exists
+  models.Users.get({username: userName}).then(function(user) {
+    if (user) {
+      res.redirect('/signup');
+    } else {
+      models.Users.create({ username: userName, password: password }).then(function() {  
+        res.redirect('/');
+      });
+    }
+  //  if it doesn't, create user
+  //  if it does, redirect to signup
   
-  models.Users.create({username, password});
-  res.end();
+  });
 });
 
 app.post('/links', 
