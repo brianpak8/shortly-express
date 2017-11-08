@@ -480,7 +480,7 @@ describe('', function() {
     });
   });
 
-  xdescribe('Sessions and cookies', function() {
+  describe('Sessions and cookies', function() {
     var requestWithSession;
     var cookieJar;
 
@@ -499,6 +499,7 @@ describe('', function() {
     };
 
     beforeEach(function(done) {
+      console.log(request.jar());
       cookieJar = request.jar();
       requestWithSession = request.defaults({ jar: cookieJar });
       done();
